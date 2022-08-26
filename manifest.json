@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "QuickSign",
+    "description": "Quickly sign up for websites using a temporary account.",
+    "version": "1.00",
+    "icons": {
+        "16": "/icons/icon_16.png",
+        "48": "/icons/icon_48.png",
+        "128": "/icons/icon_128.png"
+    },
+    "action": {
+        "default_icon": {
+            "16": "/icons/icon_16.png",
+            "48": "/icons/icon_48.png",
+            "128": "/icons/icon_128.png"
+        },
+        "default_title": "QuickSign",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["quicksign.js"]
+    }]
+}
