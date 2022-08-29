@@ -16,8 +16,103 @@ body {
 }
 
 .signup-button {
-    height: 50px;
-    width: 30px;
+    height: 40px;
+    width: 120px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    position: absolute;
+    left: 50px;
+    top: 20px;
+    background-color:rgb(197, 205, 244);
+    transition-duration: 0.25s;
+}
+
+.custom-checkbox {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    background-color: white;
+    outline: none;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+.custom-checkbox-label {
+    position: absolute;
+    top: 120px;
+    left: 75px;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.store-checkbox {
+    position: absolute;
+    top: 145px;
+    left: 50px;
+    background-color: white;
+    outline: none;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+.store-checkbox-label {
+    position: absolute;
+    top: 145px;
+    left: 75px;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.github-link {
+    color: rgb(197, 202, 228);
+    cursor: pointer;
+    text-decoration: underline;
+    position: absolute;
+    right: 50px;
+    top: 20px;
+    transition-duration: 0.25s;
+}
+
+.github-link:hover {
+    color: white;
+}
+
+.webstore-link {
+    color: rgb(197, 202, 228);
+    text-decoration: underline;
+    cursor: pointer;
+    position: absolute;
+    right: 50px;
+    top: 40px;
+    transition-duration: 0.25s;
+}
+
+.webstore-link:hover {
+    color: white;
+}
+
+.login-button {
+    height: 40px;
+    width: 120px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    position: absolute;
+    left: 50px;
+    top: 70px;
+    background-color:rgb(197, 205, 244);
+    transition-duration: 0.25s;
+}
+
+.signup-button:hover {
+    background-color:rgb(255, 255, 255);
+}
+
+.login-button:hover {
+    background-color:rgb(255, 255, 255);
 }
 
 .main-section {
@@ -25,20 +120,25 @@ body {
     width: 550px;
     color: black;
     position: absolute;
+    display: block;
     top: 75px;
     left: 0;
 }
 
 .default-password {
-    margin-left: 50px;
+    position: absolute;
+    top: 175px;
+    left: 50px;
     width: 400px;
     height: 40px;
     font-size: 18px;
     text-align: center;
     color: #3b3b3b;
     background-color: rgb(147, 160, 219);
+    transition-duration: 0.5;
     border: 2px solid black;
 }
+
 
 .icon {
     width: 32px;
