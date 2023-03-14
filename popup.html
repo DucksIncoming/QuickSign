@@ -16,6 +16,7 @@
         <div class="main-section">
             <button class="signup-button" id="quickSignUp">QuickSign Up</button>
             <button class="login-button" id="quickLogin">QuickLogin</button>
+            <input class="email-button" id="emailButton" type="image" src="icons/email.png"">
             <input type="checkbox" id="useCustom" class="custom-checkbox" value="useCustom">
             <label for="useCustom" class="custom-checkbox-label">Use Custom Password</label>
             <input type="checkbox" id="storeData" class="store-checkbox" value="storeData">
@@ -27,6 +28,7 @@
             <input id="default-password" class="default-password" value="Custom Password"></input>
         </div>
         
-        <script src="quicksign.js"></script>
+        <script src="quicksign.js" type="module"></script>
+        <script src="background.js" type="module"></script>
     </body>
 </html>
