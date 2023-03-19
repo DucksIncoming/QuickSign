@@ -1,6 +1,25 @@
 import { callFields } from "/background.js"
+import { pageConsoleLog } from "/background.js"
+
 document.getElementById("quickSignUp").addEventListener("click", quickSignUp);
 document.getElementById("emailButton").addEventListener("click", openEmails)
+document.getElementById("quickLogin").addEventListener("click", quickLogin);
+document.getElementById("default-password").addEventListener("focus", defaultPasswordFocus)
+document.getElementById("default-password").addEventListener("unfocus", defaultPasswordBlur)
+
+//Variables
+var signupUsername = ""
+var signupPassword = ""
+var signupEmail = ""
+
+function getTab() {
+    var activeTabId = 0;
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        activeTabId = tabs[0].id;
+      });
+    return activeTabId
+}
 
 function defaultPasswordFocus() {
     if (defaultPassword.value == "Custom Password"){
@@ -8,17 +27,6 @@ function defaultPasswordFocus() {
         defaultPassword.style.color = "black";
     }
 }
-
-function getPasswordInputs() {
-    var ary = [];
-    var inputs = document.getElementsByTagName("input");
-    for (var i=0; i<inputs.length; i++) {
-      if (inputs[i].type.toLowerCase() === "password") {
-        ary.push(inputs[i]);
-      }
-    }
-    return ary;
-  }
 
 function defaultPasswordBlur() {
     defaultPassword = document.getElementById("default-password");
@@ -41,10 +49,6 @@ function storeDataToggle() {
     localStorage.setItem("storeData", storeData.checked);
 }
 
-function generateEmail() { 
-    return "thisisatest@gmail.com";
-}
-
 function generateRandomPassword() {
     let passLen = Math.floor(Math.random() * 8) + 8; //Random length between 8 and 16 characters
     let validChars = [
@@ -64,7 +68,8 @@ function generateRandomPassword() {
 }
 
 function openEmails(){
-    var emailURL = "https://google.com/";
+    var emailURL = "https://www.minuteinbox.com/";
+    pageConsoleLog("peanis");
 
     chrome.tabs.create({"url": emailURL});
 }
@@ -86,11 +91,21 @@ function generateRandomUsername() {
     return username;
 }
 
-function quickSignUp() {
-    let user = generateRandomUsername();
-    let pass = generateRandomPassword();
-    let em = generateRandomUsername() + "@gmail.com";
-    
-    console.log("huh");
-    callFields(user, em, pass);
+async function quickSignUp() {
+    signupUsername = generateRandomUsername();
+    signupPassword = generateRandomPassword();
+
+    pageConsoleLog("Runtime message transmitted to background...");
+    const response = await chrome.runtime.sendMessage({name: "newEmail"});
+
+    pageConsoleLog(response);
 }
+
+chrome.runtime.onMessage.addListener(function(msg, sender, response) {
+    if (msg.includes("@")){
+        localStorage.setItem(getTab().toString(), {"email": msg, "username": signupUsername, "password": signupPassword});
+        pageConsoleLog(localStorage);
+        signupEmail = msg;
+        callFields(signupUsername, signupEmail, signupPassword);
+    }
+});

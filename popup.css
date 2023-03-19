@@ -36,6 +36,14 @@ body {
     transition-duration: 0.25s;
 }
 
+.mailbox-container {
+    width: 525px;
+    height: 230px;
+    position: absolute;
+    top: 250px;
+    overflow: hidden;
+}
+
 .custom-checkbox {
     position: absolute;
     top: 120px;
