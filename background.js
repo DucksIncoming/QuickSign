@@ -7,6 +7,37 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     }
 });
 
+export function saveToStorage(key, value) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0];
+
+        chrome.scripting.executeScript({
+            target : {tabId : activeTab.id},
+            func : saveLocalStorage,
+            args: [key, value]
+        });
+    });
+}
+
+function retrieveStorage() {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0];
+
+        chrome.scripting.executeScript({
+            target : {tabId : activeTab.id},
+            func : getPageLocalStorage
+        });
+    });
+}
+
+function getPageLocalStorage() {
+}
+
+function saveLocalStorage(key, value) {
+    localStorage.setItem(key, value);
+    console.log("Data " + value.toString() + " saved with key: " + key.toString());
+}
+
 async function newEmail() {
     let account = await mailjs.createOneAccount();
     console.log(account);
@@ -67,4 +98,8 @@ function generateRandomEmail() {
     }
 
     return email;
+}
+
+function retrieveEmails(address, password) {
+
 }
