@@ -1,12 +1,12 @@
-import { callFields, pageConsoleLog } from "/background.js"
+import { callFields, pageConsoleLog, getEmails } from "/background.js"
 
 document.getElementById("quickSignUp").addEventListener("click", quickSignUp);
-document.getElementById("emailButton").addEventListener("click", openEmails)
 document.getElementById("quickLogin").addEventListener("click", quickLogin);
 document.getElementById("default-password").addEventListener("focus", defaultPasswordFocus);
 document.getElementById("default-password").addEventListener("blur", defaultPasswordBlur);
 document.getElementById("useCustom").addEventListener("click", useCustomToggle);
 document.getElementById("storeData").addEventListener("click", storeDataToggle);
+document.getElementById("refresh").addEventListener("click", refreshEmails);
 
 //Variables
 var signupUsername = ""
@@ -34,6 +34,17 @@ chrome.storage.local.get(["customPass"]).then((result) => {
     }
 });
 
+await refreshEmails();
+
+async function refreshEmails() {
+    clearInbox();
+    let emailList = await returnTabEmails();
+
+    for (let i = 0; i < emailList["data"].length; i++) {
+        addEmailToInbox(emailList["data"][i].from.address, emailList["data"][i].subject, emailList["data"][i].intro);
+    }
+}
+
 function getTab() {
     let activeTab = ""
 
@@ -48,6 +59,24 @@ function defaultPasswordFocus() {
         defaultPassword.value = "";
         defaultPassword.style.color = "black";
     }
+}
+
+function clearInbox() {
+    let inbox = document.getElementById("inbox");
+    inbox.innerHTML = "";
+}
+
+function addEmailToInbox(sender, subject, content){
+    let inbox = document.getElementById("inbox");
+    inbox.innerHTML += '<div class="email-resource"><p class="email-sender">' + sender + '</p><p class="email-subject">' + subject + '</p><p class="email-body">' + content + '</p></div>'
+}
+
+async function returnTabEmails() {
+    const result = await chrome.storage.local.get([ getTab() ]);
+    let siteToken = result[ getTab() ].token;
+    let msgList = await getEmails(siteToken);
+
+    return msgList;
 }
 
 function defaultPasswordBlur() {
@@ -103,11 +132,6 @@ function generateRandomPassword() {
     return password;
 }
 
-function openEmails(){
-    var emailURL = "https://www.minuteinbox.com/";
-    chrome.tabs.create({"url": emailURL});
-}
-
 function generateRandomUsername() {
     let passLen = Math.floor(Math.random() * 4) + 8; //Random length between 8 and 12 characters
     let validChars = [
@@ -134,7 +158,6 @@ async function quickSignUp() {
     else {
         signupPassword = generateRandomPassword();
     }
-    
     pageConsoleLog("Runtime message transmitted to background...");
     const response = await chrome.runtime.sendMessage({name: "newEmail"});
 

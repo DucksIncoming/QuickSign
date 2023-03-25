@@ -7,41 +7,19 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     }
 });
 
-export function saveToStorage(key, value) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0];
+export async function getEmails(tok) {
+    let tempTok = mailjs.token;
+    mailjs.token = tok;
+    let result = await mailjs.getMessages();
+    mailjs.token = tempTok
 
-        chrome.scripting.executeScript({
-            target : {tabId : activeTab.id},
-            func : saveLocalStorage,
-            args: [key, value]
-        });
-    });
-}
-
-function retrieveStorage() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0];
-
-        chrome.scripting.executeScript({
-            target : {tabId : activeTab.id},
-            func : getPageLocalStorage
-        });
-    });
-}
-
-function getPageLocalStorage() {
-}
-
-function saveLocalStorage(key, value) {
-    localStorage.setItem(key, value);
-    console.log("Data " + value.toString() + " saved with key: " + key.toString());
+    return result;
 }
 
 async function newEmail() {
     let account = await mailjs.createOneAccount();
     console.log(account);
-    chrome.runtime.sendMessage(account.data.username);
+    chrome.runtime.sendMessage(account.data.username + "|" + mailjs.token.toString());
 }
 
 export function callFields(user, em, pass) {
@@ -67,13 +45,13 @@ function fillFields(user, em, pass) {
 
     for (let i = 0; i < inputs.length; i++) {
         let input = inputs[i]
-        if (input.type == "email" || input.name.includes("email") || input.id.includes("email")) {
+        if (input.type.toLowerCase() == "email" || input.name.toLowerCase().includes("email") || input.id.toLowerCase().includes("email")) {
             input.value = email;
         }
-        else if (input.type == "text" || input.name.includes("user") || input.id.includes("user")) {
+        else if (input.type.toLowerCase() == "text" || input.name.toLowerCase().includes("user") || input.id.toLowerCase().includes("user")) {
             input.value = username;
         }
-        else if (input.type == "password" || input.name.includes("pass") || input.id.includes("pass")) {
+        else if (input.type.toLowerCase() == "password" || input.name.toLowerCase().includes("pass") || input.id.toLowerCase().includes("pass")) {
             input.value = password;
         }
     }
@@ -83,23 +61,10 @@ export function pageConsoleLog(msg) {
     console.log(msg);
 }
 
-function generateRandomEmail() {
-    let passLen = Math.floor(Math.random() * 4) + 8; //Random length between 8 and 12 characters
-    let validChars = [
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-    
-    let email = "";
-
-    for (let i = 0; i < passLen; i++){
-        let idx = Math.floor(Math.random() * validChars.length);
-        email += validChars[idx];
-    }
-
-    return email;
-}
-
-function retrieveEmails(address, password) {
-
+export async function retrieveEmails(tok) {
+    let tempTok = mailjs.token;
+    mailjs.token = tok;
+    let result = await mailjs.getMessages();
+    mailjs.token = tempTok;
+    return result;
 }

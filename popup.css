@@ -2,7 +2,7 @@ body {
     background-color: rgb(66, 75, 110);
     color: white;
     width: 500px;
-    height: 300px;
+    height: 450px;
 }
 
 .title {
@@ -13,6 +13,57 @@ body {
 .author {
     margin-left: 150px;
     margin-top: 35px;
+}
+
+.inbox {
+    width: 450px;
+    position: absolute;
+    height: 125px;
+    top: 250px;
+    left: 30px;
+    background-color: white;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.email-sender {
+    color: #545454;
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+.email-subject {
+    margin-top: 0px;
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.email-body {
+    color: black;
+    font-size: 16px;
+}
+
+.refresh {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 50px;
+    top: 75px;
+}
+
+.email-resource {
+    max-width: 450px;
+    min-height: 50px;
+    background-color: #cce6ff;
+    margin-bottom: 5px;
+    color: black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .email-button {
