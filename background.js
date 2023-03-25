@@ -8,10 +8,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 export async function getEmails(tok) {
-    let tempTok = mailjs.token;
-    mailjs.token = tok;
     let result = await mailjs.getMessages();
-    mailjs.token = tempTok
 
     return result;
 }
@@ -59,12 +56,4 @@ function fillFields(user, em, pass) {
 
 export function pageConsoleLog(msg) {
     console.log(msg);
-}
-
-export async function retrieveEmails(tok) {
-    let tempTok = mailjs.token;
-    mailjs.token = tok;
-    let result = await mailjs.getMessages();
-    mailjs.token = tempTok;
-    return result;
 }

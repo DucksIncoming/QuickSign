@@ -92,7 +92,6 @@ function defaultPasswordBlur() {
 }
 
 function quickLogin() {
-    //alert("This feature is currently not supported. It will be available in a later version, apologies!")
     chrome.storage.local.get([ getTab() ]).then((result) => {
         let data = result[getTab()];
 
