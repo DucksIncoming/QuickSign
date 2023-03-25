@@ -1,3 +1,6 @@
+//Code ripped straight from https://github.com/cemalgnlts/Mailjs
+//Essentially just an easier way of using mail.tm
+
 class Mailjs {
   constructor() {
     this.baseUrl = "https://api.mail.tm"

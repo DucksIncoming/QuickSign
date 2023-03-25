@@ -3,8 +3,10 @@ import { callFields, pageConsoleLog } from "/background.js"
 document.getElementById("quickSignUp").addEventListener("click", quickSignUp);
 document.getElementById("emailButton").addEventListener("click", openEmails)
 document.getElementById("quickLogin").addEventListener("click", quickLogin);
-document.getElementById("default-password").addEventListener("focus", defaultPasswordFocus)
-document.getElementById("default-password").addEventListener("blur", defaultPasswordBlur)
+document.getElementById("default-password").addEventListener("focus", defaultPasswordFocus);
+document.getElementById("default-password").addEventListener("blur", defaultPasswordBlur);
+document.getElementById("useCustom").addEventListener("click", useCustomToggle);
+document.getElementById("storeData").addEventListener("click", storeDataToggle);
 
 //Variables
 var signupUsername = ""
@@ -17,8 +19,23 @@ var defaultPassword = document.getElementById("default-password");
 var useCustom = document.getElementById("useCustom");
 var storeData = document.getElementById("storeData");
 
+chrome.storage.local.get(["useCustom"]).then((result) => {
+    useCustom.checked = result.useCustom;
+});
+chrome.storage.local.get(["storeData"]).then((result) => {
+    storeData.checked = result.storeData;
+});
+chrome.storage.local.get(["customPass"]).then((result) => {
+    if (result.customPass == ""){
+        defaultPassword.value = "Custom Password"
+    }
+    else {
+        defaultPassword.value = result.customPass;
+    }
+});
+
 function getTab() {
-    var activeTabId = 0;
+    let activeTab = ""
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         activeTab = tabs[0].name;
@@ -34,7 +51,10 @@ function defaultPasswordFocus() {
 }
 
 function defaultPasswordBlur() {
-    localStorage.setItem("customPassword", defaultPassword.value);
+    const key = "customPass";
+    const value = defaultPassword.value
+
+    chrome.storage.local.set({[key]: value});
 
     if (defaultPassword.value == ""){
         defaultPassword.value = "Custom Password";
@@ -43,23 +63,26 @@ function defaultPasswordBlur() {
 }
 
 function quickLogin() {
-    let tabName = getTab();
-    let siteData = chrome.storage.local.get([ tabName ])
-    if (siteData !== null) {
-        callFields(siteData["username"], siteData["email"], siteData["password"]);
-    }
-    else {
-        alert("Error: No temporary login data found for address: " + tabName.toString());
-    }
+    //alert("This feature is currently not supported. It will be available in a later version, apologies!")
+    chrome.storage.local.get([ getTab() ]).then((result) => {
+        let data = result[getTab()];
+
+        callFields(data["username"], data["email"], data["password"]);
+    });
 }
 
 function useCustomToggle() {
-    localStorage.setItem("useCustom", useCustom.checked);
-    bkg.console.log('foo');
+    const key = "useCustom";
+    const value = document.getElementById("useCustom").checked;
+
+    chrome.storage.local.set({ [key]: value })
 }
 
 function storeDataToggle() {
-    localStorage.setItem("storeData", storeData.checked);
+    const key = "storeData";
+    const value = document.getElementById("storeData").checked;
+
+    chrome.storage.local.set({ [key]: value });
 }
 
 function generateRandomPassword() {
@@ -104,8 +127,14 @@ function generateRandomUsername() {
 
 async function quickSignUp() {
     signupUsername = generateRandomUsername();
-    signupPassword = generateRandomPassword();
-
+    pageConsoleLog()
+    if (useCustom.checked) {
+        signupPassword = document.getElementById("default-password").value;
+    }
+    else {
+        signupPassword = generateRandomPassword();
+    }
+    
     pageConsoleLog("Runtime message transmitted to background...");
     const response = await chrome.runtime.sendMessage({name: "newEmail"});
 
@@ -116,11 +145,12 @@ chrome.runtime.onMessage.addListener(function(msg, sender, response) {
     if (msg.includes("@")){
         signupEmail = msg.split("|")[0];
         signupToken = msg.split("|")[1];
-        data = {"example.com": {"email": "example", "username": "example", "password": "example"}};
-        //data = {};
-        data[getTab()] = {"email": signupEmail, "username": signupUsername, "password": signupPassword, "token": signupToken};
+        const key = getTab()
+        const value = {"email": signupEmail, "username": signupUsername, "password": signupPassword, "token": signupToken};
+        if (storeData.checked) {
+            chrome.storage.local.set({[key]: value});
+        }
 
-        chrome.storage.local.set(data);
         callFields(signupUsername, signupEmail, signupPassword);
     }
 });
