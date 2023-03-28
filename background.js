@@ -59,7 +59,3 @@ function fillFields(user, em, pass) {
         }
     }
 }
-
-export function pageConsoleLog(msg) {
-    console.log(msg);
-}

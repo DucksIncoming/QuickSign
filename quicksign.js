@@ -1,4 +1,4 @@
-import { callFields, pageConsoleLog, getEmails } from "/background.js"
+import { callFields, getEmails } from "/background.js"
 
 document.getElementById("quickSignUp").addEventListener("click", quickSignUp);
 document.getElementById("quickLogin").addEventListener("click", quickLogin);
@@ -155,8 +155,7 @@ async function quickSignUp() {
     else {
         signupPassword = generateRandomPassword();
     }
-    pageConsoleLog("Runtime message transmitted to background...");
-    const response = await chrome.runtime.sendMessage({name: "newEmail"});
+    await chrome.runtime.sendMessage({name: "newEmail"});
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, response) {
@@ -168,7 +167,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, response) {
         if (storeData.checked) {
             chrome.storage.local.set({[key]: value});
         }
-
         callFields(signupUsername, signupEmail, signupPassword);
     }
 });
