@@ -40,8 +40,8 @@ async function refreshEmails() {
     clearInbox();
     let emailList = await returnTabEmails();
 
-    for (let i = 0; i < emailList["data"].length; i++) {
-        addEmailToInbox(emailList["data"][i].from.address, emailList["data"][i].subject, emailList["data"][i].intro);
+    for (let i = 0; i < emailList.length; i++) {
+        addEmailToInbox(emailList[i]["data"].from.address, emailList[i]["data"].subject, emailList[i]["data"].text);
     }
 }
 
@@ -73,9 +73,8 @@ function addEmailToInbox(sender, subject, content){
 
 async function returnTabEmails() {
     const result = await chrome.storage.local.get([ getTab() ]);
-    let siteToken = result[ getTab() ].token;
-    let msgList = await getEmails(siteToken);
-
+    let siteEmail = result[ getTab() ].email;
+    let msgList = await getEmails(siteEmail);
     return msgList;
 }
 
@@ -150,7 +149,6 @@ function generateRandomUsername() {
 
 async function quickSignUp() {
     signupUsername = generateRandomUsername();
-    pageConsoleLog()
     if (useCustom.checked) {
         signupPassword = document.getElementById("default-password").value;
     }
@@ -159,8 +157,6 @@ async function quickSignUp() {
     }
     pageConsoleLog("Runtime message transmitted to background...");
     const response = await chrome.runtime.sendMessage({name: "newEmail"});
-
-    pageConsoleLog(response);
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, response) {

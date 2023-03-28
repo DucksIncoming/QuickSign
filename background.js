@@ -7,16 +7,22 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     }
 });
 
-export async function getEmails(tok) {
-    let result = await mailjs.getMessages();
+export async function getEmails(user) {
+    await mailjs.login(user, "standardPassword");
+    let msgs = await mailjs.getMessages();
+    let output = [];
 
-    return result;
+    for (let i = 0; i < msgs["data"].length; i++) {
+        let msgResource = await mailjs.getMessage(msgs["data"][i].id);
+        output.push(msgResource);
+    }
+
+    return output;
 }
 
 async function newEmail() {
     let account = await mailjs.createOneAccount();
-    console.log(account);
-    chrome.runtime.sendMessage(account.data.username + "|" + mailjs.token.toString());
+    chrome.runtime.sendMessage(account.data.username + "|" + mailjs.token);
 }
 
 export function callFields(user, em, pass) {

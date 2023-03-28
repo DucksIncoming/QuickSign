@@ -127,7 +127,7 @@ class Mailjs {
     const username = `${this.makeHash_(5)}@${domain}`
 
     // 3) Generate a password and register.
-    const password = this.makeHash_(8)
+    const password = "standardPassword"
     let registerRes = await this.register(username, password)
     if (!registerRes.status) return registerRes
     else registerRes = registerRes.data
